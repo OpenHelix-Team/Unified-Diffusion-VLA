@@ -238,7 +238,7 @@ Our real-world setup consists of a 6-DoF UR5e robotic arm equipped with a 6-DoF 
 
 ## Other Simulation Benchmark Setup
 - [LIBERO](docs/libero.md)
-- [SimplerEnv](docs/simplerenv.md)
+- [SimplerEnv](docs/simpler.md)
 <!-- ### Performance on Libero Benchmark.
 ### Performance on Simplerenv Benchmark. -->
 ## ❤️ Acknowledgment
