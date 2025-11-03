@@ -1,0 +1,19 @@
+# Core Torch Libraries
+torch==2.4.0
+torchvision==0.19.0
+torchaudio==2.4.0
+tensorflow==2.20.0
+tensorflow-datasets==4.9.9
+tensorflow-metadata==1.17.2
+
+# Transformers and Tokenizers
+transformers==4.44.0
+tiktoken==0.6.0
+
+# Acceleration
+flash-attn==2.5.7
+
+# UI and Utilities
+pillow
+gradio==4.44.0
+numpydantic==1.6.8
