@@ -6,7 +6,7 @@
 <a href="https://irpn-eai.github.io/UD-VLA.github.io/" target="_blank">
     <img alt="project" src="https://img.shields.io/badge/Project-blue?logo=probot&label=UD-VLA" height="25" />
 </a>
-<a href="[https://huggingface.co/chenpyyy/UD-VLA_CALVIN-ABCD](https://huggingface.co/chenpyyy/UD-VLA_CALVIN_ABCD_D)" target="_blank">
+<a href="https://huggingface.co/chenpyyy/UD-VLA_CALVIN_ABCD_D" target="_blank">
     <img alt="HF Model" src="https://img.shields.io/badge/Model-ffd400?logo=huggingface&label=UD-VLA" height="25" />
 </a>
 <br>
