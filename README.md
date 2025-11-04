@@ -60,7 +60,7 @@ This repository is an improved fork of [UniVLA](https://github.com/baaivision/Un
 conda create -n udvla-calvin python=3.10 -y
 conda activate udvla-calvin
 # Clone and install the openvla repo
-git clone https://github.com/IRPN-EAI/UD-VLA.git
+git clone https://github.com/OpenHelix-Team/UD-VLA.git
 cd UD-VLA
 pip install -r requirements.txt
 
