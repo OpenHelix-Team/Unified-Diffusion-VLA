@@ -36,6 +36,8 @@ python tools/pickle_gen/pickle_generation_libero.py\
 # default is one node training, recommend multi-node training.
 bash scripts/simulator/libero/train_libero_video_i-ia_bid_mi.sh
 ```
+> You can fine-tune the model on a single LIBERO environment after fine-tuning it on all environments. This typically yields an additional 1–5 percentage points of performance.
+
 
 ## Model Evaluation
 ```shell
