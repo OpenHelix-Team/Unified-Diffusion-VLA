@@ -1,6 +1,7 @@
 # Unified Diffusion VLA: Vision-Language-Action Model via Joint Discrete Denoising Diffusion Process
+[![Paper](https://img.shields.io/badge/Paper-A42C25?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2511.01718) [![Page](https://img.shields.io/badge/Project--Page-blue?style=for-the-badge&logo=homepage&logoColor=white)](https://irpn-eai.github.io/UD-VLA.github.io) [![Hugging Face Collection](https://img.shields.io/badge/Models-fcd022?style=for-the-badge&logo=huggingface&logoColor=white)](https://huggingface.co/chenpyyy/UD-VLA_CALVIN_ABCD_D) [![WeChat](https://img.shields.io/badge/WeChat--Group-07C160?style=for-the-badge&logo=wechat&logoColor=white)]([https://github.com/OpenHelix-Team/VLA-Adapter/issues/1](https://github.com/OpenHelix-Team/UD-VLA/issues/1))
 
-<a href="https://arxiv.org/abs/2511.01718" target="_blank">
+<!-- <a href="https://arxiv.org/abs/2511.01718" target="_blank">
     <img alt="arXiv" src="https://img.shields.io/badge/arxiv-red?logo=arxiv&label=UD-VLA" height="25" />
 </a>
 <a href="https://irpn-eai.github.io/UD-VLA.github.io/" target="_blank">
@@ -11,7 +12,7 @@
 </a>
 <a href="https://github.com/OpenHelix-Team/UD-VLA/issues/1" target="_blank">
     <img alt="Wechat" src="https://img.shields.io/badge/Wechat-green?logo=wechat&label=UD-VLA" height="25" />
-</a>
+</a> -->
 
 
 <br>
