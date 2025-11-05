@@ -17,7 +17,7 @@
 
 <br>
 
- **Jiayi Chen¹\***,**Wenxuan Song¹\***, **Pengxiang Ding²˒³**, **Ziyang Zhou¹**, **Han Zhao²˒³**, **Feilong Tang⁴**,**Donglin Wang²**,  **Haoang Li¹†**
+ **Jiayi Chen¹\***,**Wenxuan Song¹†\***, **Pengxiang Ding²˒³**, **Ziyang Zhou¹**, **Han Zhao²˒³**, **Feilong Tang⁴**,**Donglin Wang²**,  **Haoang Li¹‡**
 
 ¹ IRPN Lab, HKUST(GZ) <br>
 ² MiLab, Westlake University  <br> 
