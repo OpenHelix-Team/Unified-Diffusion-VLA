@@ -28,7 +28,7 @@
 
 **The first open-sourced diffusion vision-langauge-action model.**
 
-<hr style="border: 2px solid gray;"></hr>
+<!-- <hr style="border: 2px solid gray;"></hr> -->
 
 ## List
  
