@@ -26,7 +26,7 @@
 
 \* Equal Contribution  † Project leader  ‡ Corresponding Author -->
 
-**The first open-sourced diffusion vision-langauge-action model.**
+**🔥 The first open-sourced diffusion vision-langauge-action model.**
 
 <!-- <hr style="border: 2px solid gray;"></hr> -->
 
