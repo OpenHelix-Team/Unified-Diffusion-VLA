@@ -72,6 +72,7 @@ class DataArguments:
     use_clean_image: bool = field(default=False)
     max_action_len: int = field(default=70)
     fixbe: bool = field(default=True)
+    use_schedule: bool = field(default=True)
 
 @dataclass
 class TrainingArguments(tf.TrainingArguments):
