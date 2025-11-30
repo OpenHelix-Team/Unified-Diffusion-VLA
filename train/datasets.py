@@ -1050,6 +1050,17 @@ class Emu3SFTDatasetI2IA_mi(Emu3SFTDataset):
             sample_input_ids = sample_text["input_ids"][0]
             sample_attention_mask = sample_text["attention_mask"][0]
             labels = torch.full((self.tokenizer.model_max_length,), fill_value=-100, dtype=torch.long)
+            
+            # padding: -1, text: 0, image/action: cur_level
+            token_levels = torch.full((self.tokenizer.model_max_length,), fill_value=-1, dtype=torch.long)
+            cur_level = 0
+            cur_idx = 0
+            
+            text_end = len(sample_input_ids)
+            token_levels[cur_idx:text_end] = cur_level
+            cur_level += 1
+            cur_idx = text_end
+            
             # first image
             image_prompt = self.format_video_prompt(image_tokens[0:1])
             if self.use_gripper:
@@ -1065,6 +1076,10 @@ class Emu3SFTDatasetI2IA_mi(Emu3SFTDataset):
             if self.use_gripper:
                 gripper_tokens=gripper_tokens[1:]
             # ratio=random.choice(self.mask_ratios_list)
+            
+            token_levels[cur_idx:len(sample_input_ids)] = cur_level
+            cur_level += 1
+            cur_idx = len(sample_input_ids)
             
             for i in range(len(image_tokens)):
                 image_prompt = self.format_video_prompt(image_tokens[i:i+1])
@@ -1090,6 +1105,10 @@ class Emu3SFTDatasetI2IA_mi(Emu3SFTDataset):
                         
                         )
                     # print("masked_image_input_ids.shape:", masked_image_input_ids.shape)
+              
+                token_levels[cur_idx:cur_idx+len(masked_image_input_ids)] = cur_level
+                cur_level += 1
+                cur_idx += len(masked_image_input_ids)
               
                 if self.actions:
                     if self.actions_format == "fast":
@@ -1125,6 +1144,10 @@ class Emu3SFTDatasetI2IA_mi(Emu3SFTDataset):
                         else:  # Otherwise, fill both vision and action parts in the labels
                             labels[action_start-len(masked_image_input_ids):action_start] = masked_labels
                             labels[action_start:action_end] = masked_action_labels
+                            
+                        token_levels[cur_idx:action_end] = cur_level
+                        cur_level += 1
+                        cur_idx = action_end
                 else:
                     sample_input_ids = torch.cat([sample_input_ids, masked_image_input_ids], dim=-1)
                     sample_attention_mask = torch.cat([sample_attention_mask, image_attention_mask], dim=-1)
@@ -1138,6 +1161,7 @@ class Emu3SFTDatasetI2IA_mi(Emu3SFTDataset):
             sample = self.tokenizer.pad(
                     {
                         "input_ids": sample_input_ids,
+                        "token_levels": token_levels,
                         "attention_mask": sample_attention_mask,
                         "labels": labels
                     },

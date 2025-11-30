@@ -211,6 +211,80 @@ def build_blockwise_attn_mask(
         bias = bias.masked_fill(bias.bool(), float("-inf"))
         return bias
 
+def build_blockwise_causal_attn_mask(
+    token_levels: torch.Tensor,        # [B, L] -1:pad, 0:text, >0:img/action
+    past_key_values_length: int = 0,
+) -> torch.Tensor:
+    """
+    针对 [Text, Image, Action, Image, Action...] 结构的 VLA 专用 Mask 构建函数。
+    
+    Args:
+        token_levels: 
+            0: Text (开头唯一一段) -> 块内 Causal
+            >0: Image/Action (交替出现) -> 块内 Bidirectional
+            -1: Padding
+    """
+    B, L = token_levels.shape
+    device = token_levels.device
+    
+    # 1. 生成 Block ID
+    # 逻辑：只要 level 发生变化 (0->1, 1->2, 2->1...)，Block ID 就 +1
+    # 这样可以完美切分 [Text, Img1, Act1, Img2...] 为 [Block0, Block1, Block2, Block3...]
+    # 即使 Image 和 Action 复用 level (如 1,2,1,2)，也能正确区分不同阶段
+    is_change = (token_levels[:, 1:] != token_levels[:, :-1])
+    # 在最左边补 False (第一位不产生变化)
+    is_change = torch.cat([torch.zeros((B, 1), dtype=torch.bool, device=device), is_change], dim=1)
+    block_ids = torch.cumsum(is_change.int(), dim=1) # [B, L]
+
+    # 2. 广播构建矩阵 [B, L, L]
+    q_block = block_ids.unsqueeze(2)      # [B, L, 1] (Query 在行)
+    k_block = block_ids.unsqueeze(1)      # [B, 1, L] (Key 在列)
+    q_level = token_levels.unsqueeze(2)   # [B, L, 1] 用于判断 Query 是否是文本
+
+    # 3. 核心逻辑：三层叠加
+    
+    # (A) 块间因果 (Inter-Block Causal)
+    # 允许看当前 Block 及之前的 Block (Block Key <= Block Query)
+    mask = (k_block <= q_block)
+
+    # (B) 块内修正 (Intra-Block Refinement)
+    # 只有当 Query 和 Key 在同一个 Block 时，才需要特殊处理
+    is_same_block = (k_block == q_block)
+    
+    # 如果是 Text Block (level == 0)，块内强制因果 (只能看自己及之前的)
+    # 生成标准的 causal tril: [0, 1, 2] <= [0, 1, 2]
+    pos = torch.arange(L, device=device)
+    causal_tril = (pos.unsqueeze(0) <= pos.unsqueeze(1)).unsqueeze(0) # [1, L, L]
+    
+    # 逻辑：在同一块内 AND 是文本块 AND 违反了因果律(未来看过去) -> 屏蔽
+    # 也就是：mask 在 (同块 & 文本 & 上三角) 的位置要置为 False
+    is_text_violation = is_same_block & (q_level == 0) & (~causal_tril)
+    mask = mask & (~is_text_violation)
+
+    # 注意：对于 Image/Action (level > 0)，我们不需要做任何操作
+    # 因为 Step (A) 已经允许了同 Block 可见，且不需要类似 Text 的因果限制。
+    # 它们天然就是 Bidirectional 的。
+
+    # (C) Padding 处理
+    k_is_pad = (token_levels == -1).unsqueeze(1) # [B, 1, L]
+    mask = mask & (~k_is_pad)
+
+    # 4. KV Cache 处理 (Inference 时拼接过去)
+    if past_key_values_length > 0:
+        # 过去的内容对现在来说都是“已发生”，所以全可见
+        # (假设 KV Cache 里没有 padding，或者外部已经处理过)
+        mask_past = torch.ones((B, L, past_key_values_length), dtype=torch.bool, device=device)
+        mask_final = torch.cat([mask_past, mask], dim=-1)
+    else:
+        mask_final = mask
+
+    # 5. 格式调整
+    # 返回 [B, 1, L, K] 适配 Transformer Head 维度，
+    # 并转为 float (0.0 / -inf) 适配大多数 Trainer
+    mask_float = torch.zeros_like(mask_final, dtype=torch.float32)
+    mask_float = mask_float.masked_fill(~mask_final, float("-inf"))
+    
+    return mask_float.unsqueeze(1)
 
 def delete_false_key_value(#删除后面错误的token
         self,
@@ -1164,6 +1238,7 @@ class Emu3Model(Emu3PreTrainedModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
+        token_levels: Optional[torch.LongTensor] = None,
     ) -> Union[Tuple, BaseModelOutputWithPast]:
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
@@ -1213,17 +1288,22 @@ class Emu3Model(Emu3PreTrainedModel):
             if attention_mask is not None and len(attention_mask.shape) == 4:
                 attention_mask = attention_mask
             else:
-                attention_mask = build_blockwise_attn_mask(
-                    input_ids,
-                    boi_token_id=151852,
-                    eoi_token_id=151853,
-                    pad_token_id=151643,
-                    boa_token_id=151844,
-                    eoa_token_id=151845,
-                    include_boundary_as_image=True,
-                    return_bool_mask=False,
+                # attention_mask = build_blockwise_attn_mask(
+                #     input_ids,
+                #     boi_token_id=151852,
+                #     eoi_token_id=151853,
+                #     pad_token_id=151643,
+                #     boa_token_id=151844,
+                #     eoa_token_id=151845,
+                #     include_boundary_as_image=True,
+                #     return_bool_mask=False,
+                #     past_key_values_length=past_key_values_length,
+                # ).to(dtype=inputs_embeds.dtype)
+                attention_mask = build_blockwise_causal_attn_mask(
+                    token_levels,
                     past_key_values_length=past_key_values_length,
                 ).to(dtype=inputs_embeds.dtype)
+                
         elif self.use_bidirectional_attn_mask:
             if attention_mask is not None and len(attention_mask.shape) == 4:
                 attention_mask = attention_mask
@@ -1363,6 +1443,7 @@ class Emu3ForCausalLM(Emu3PreTrainedModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
+        token_levels: Optional[torch.LongTensor] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         r"""
         Args:
@@ -1454,6 +1535,7 @@ class Emu3ForCausalLM(Emu3PreTrainedModel):
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
+            token_levels=token_levels,
         )
 
         hidden_states = outputs[0]
@@ -1715,6 +1797,7 @@ class Emu3MoE(Emu3PreTrainedModel):
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
         action: Optional[torch.Tensor] = None,
+        token_levels: Optional[torch.LongTensor] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         r"""
         Args:
@@ -1743,6 +1826,7 @@ class Emu3MoE(Emu3PreTrainedModel):
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
+            token_levels=token_levels,
         )
 
         hidden_states = outputs[0]
