@@ -1288,21 +1288,21 @@ class Emu3Model(Emu3PreTrainedModel):
             if attention_mask is not None and len(attention_mask.shape) == 4:
                 attention_mask = attention_mask
             else:
-                # attention_mask = build_blockwise_attn_mask(
-                #     input_ids,
-                #     boi_token_id=151852,
-                #     eoi_token_id=151853,
-                #     pad_token_id=151643,
-                #     boa_token_id=151844,
-                #     eoa_token_id=151845,
-                #     include_boundary_as_image=True,
-                #     return_bool_mask=False,
-                #     past_key_values_length=past_key_values_length,
-                # ).to(dtype=inputs_embeds.dtype)
-                attention_mask = build_blockwise_causal_attn_mask(
-                    token_levels,
+                attention_mask = build_blockwise_attn_mask(
+                    input_ids,
+                    boi_token_id=151852,
+                    eoi_token_id=151853,
+                    pad_token_id=151643,
+                    boa_token_id=151844,
+                    eoa_token_id=151845,
+                    include_boundary_as_image=True,
+                    return_bool_mask=False,
                     past_key_values_length=past_key_values_length,
                 ).to(dtype=inputs_embeds.dtype)
+                # attention_mask = build_blockwise_causal_attn_mask(
+                #     token_levels,
+                #     past_key_values_length=past_key_values_length,
+                # ).to(dtype=inputs_embeds.dtype)
                 
         elif self.use_bidirectional_attn_mask:
             if attention_mask is not None and len(attention_mask.shape) == 4:
