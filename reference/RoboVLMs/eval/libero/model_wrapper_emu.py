@@ -407,6 +407,11 @@ class EmuVLAModel_i_ia_dis(EmuVLAModel):
         text_prompt = [self.tokenizer.bos_token + prompt]
         text_tokens = self.processor.tokenizer(text_prompt)
         
+        token_levels = []
+        text_token_levels = torch.zeros(len(text_tokens['input_ids'][0]), dtype=torch.long)
+        token_levels.append(text_token_levels)
+        cur_level = 1
+        
         text_tokens = BatchFeature(data={**text_tokens}, tensor_type='pt')
 
         if self.video_mode:
@@ -443,11 +448,14 @@ class EmuVLAModel_i_ia_dis(EmuVLAModel):
                 # print("img_input_ids.shape:", img_input_ids.shape)
                 img_token_type_ids = history[i]['token_type_ids']
                 img_attention_mask = history[i]['attention_mask']
-                if i==0 :#i2ia 
-                    img_input_ids=img_input_ids[:,:-1]
-                    img_token_type_ids=img_token_type_ids[:,:-1]
-                    img_attention_mask=img_attention_mask[:,:-1]
+ 
+                img_input_ids=img_input_ids[:,:-1]
+                img_token_type_ids=img_token_type_ids[:,:-1]
+                img_attention_mask=img_attention_mask[:,:-1]
 
+                image_token_levels = torch.full((img_input_ids.shape[-1],), fill_value=cur_level, dtype=torch.long)
+                cur_level += 1
+                token_levels.append(image_token_levels)
                 
                 # 对应的动作
                 if i>0 and i < len(action_history)+1 and self.vision_queue.maxsize > 1:
@@ -505,7 +513,18 @@ class EmuVLAModel_i_ia_dis(EmuVLAModel):
             uncond_input_ids = None
             mask_token_id=151848
             top_k=None
-            input_ids_gen = make_mask(history[0]['input_ids'], mask_token_id,mask_begin=151852,mask_end=151853,new_action_len=self.max_action_len).to(self.device)
+            
+            input_ids_gen, token_levels_gen = make_mask_with_token_levels(
+                history[0]["input_ids"],
+                mask_token_id,
+                cur_level,
+                new_action_len=self.max_action_len,
+            )
+            input_ids_gen = input_ids_gen.to(self.device)
+            
+            token_levels.extend(token_levels_gen)
+            token_levels = torch.cat(token_levels).unsqueeze(0).to(self.device) # [batch, seq_len]
+            
             # print("input_ids.shape:",final_inputs['input_ids'].shape)
             # print("input_ids_gen.shape:",input_ids_gen.shape)
             input_ids=final_inputs['input_ids'].to(self.device)
@@ -533,6 +552,7 @@ class EmuVLAModel_i_ia_dis(EmuVLAModel):
                         self.model, 
                         input_ids, 
                         input_ids_gen,
+                        token_levels,
                         # uncond_input_ids,
                         # uncond_prefix, 
                         None, 
@@ -716,7 +736,8 @@ def mask_by_random_topk(mask_len, probs, temperature=1.0, generator=None):
 def denoise(
     model, 
     input_ids,
-    input_ids_gen, 
+    input_ids_gen,
+    token_levels,
     # uncond_input_ids, 
     # uncond_prefix, 
     attention_mask, 
@@ -743,7 +764,7 @@ def denoise(
         input_ids[:,-seq_len+eoa_index+1:]=mask_token_id
         
 
-    logits = forward(model, input_ids, attention_mask=attention_mask)
+    logits = forward(model, input_ids, attention_mask=attention_mask, token_levels=token_levels)
     logits = logits[:, -(seq_len + 1):-1, :]
     # print("logits.shape:", logits.shape)
     if allowed_action_token_ids is not None:
@@ -957,6 +978,7 @@ def forward(
     input_ids,
     input_embeddings=None,
     attention_mask=None,
+    token_levels=None,
     labels=None,
     label_smoothing=0.0,
     config=None,
@@ -970,7 +992,7 @@ def forward(
     #     logits = model.showo(input_ids=input_ids, attention_mask=attention_mask)['logits']
     # else:
     #     logits = model.showo(inputs_embeds=input_embeddings, attention_mask=attention_mask)['logits']
-    dict=model(input_ids=input_ids, attention_mask=attention_mask)
+    dict=model(input_ids=input_ids, attention_mask=attention_mask, token_levels=token_levels)
     logits=dict['logits']
     past=dict['past_key_values']
 
@@ -1000,21 +1022,37 @@ def make_mask_action(mask_token_id,new_action_len=70):
     mask_action[:,0]=151844
     return mask_action
 
-def make_mask(input_ids, mask_token_id,mask_begin=151852,mask_end=151853,new_action_len=70):
-    is_boi =(input_ids == mask_begin)
-    # print("is_boi:",~is_boi)
-    is_eoi=(input_ids == mask_end)
-    # is_boa=(input_ids == 151844)
+def make_mask_with_token_levels(
+    input_ids, mask_token_id, cur_level,
+    boi_id=151852, eoi_id=151853, boa_id=151844, new_action_len=70,
+):
+    '''
+    mask the input image(the same shape) + action(boa + [mask_token] * (new_action_len-1))
+    '''
+    input_ids = input_ids[..., :-1] # the last token of input_ids is boa
+    is_boi = input_ids == boi_id
+    is_eoi = input_ids == eoi_id
+    
     starts_cum = torch.cumsum(is_boi, dim=1)
-    ends_cum   = torch.cumsum(is_eoi, dim=1)
-    is_mask=(starts_cum-ends_cum>0) & (~is_boi) & (~is_eoi) 
-    # print("is_mask:",is_mask)
-    mask_inputs=torch.full_like(input_ids,mask_token_id)
-    mask_inputs=torch.where(is_mask,mask_inputs,input_ids)
-    mask_action=torch.full((1, new_action_len-1),mask_token_id)
-    mask_inputs=torch.cat([mask_inputs,mask_action],dim=1)
-    # print("mask_inputs:",mask_inputs)
-    return mask_inputs
+    ends_cum = torch.cumsum(is_eoi, dim=1)
+    
+    is_mask = (starts_cum - ends_cum > 0) & (~is_boi) & (~is_eoi)
+    
+    mask_inputs = torch.full_like(input_ids, mask_token_id)
+    mask_inputs = torch.where(is_mask, mask_inputs, input_ids)
+    
+    mask_action = torch.full((1, new_action_len - 1), mask_token_id) # the first token is boa
+    
+    token_levels = []
+
+    image_token_levels = torch.full((mask_inputs.shape[-1], ), cur_level, dtype=torch.long)
+    token_levels.append(image_token_levels)
+    cur_level += 1
+    action_token_levels = torch.full((new_action_len, ), cur_level, dtype=torch.long)
+    token_levels.append(action_token_levels)
+    mask_inputs = torch.cat([mask_inputs, torch.tensor([[boa_id]], dtype=torch.long), mask_action], dim=-1)
+        
+    return mask_inputs, token_levels
 
 class EmuVLAModel_i_ia_dis_2stage(EmuVLAModel):
     def __init__(self,emu_hub,vq_hub,vision_hub,device,window_size=1,fast_path="/data/user/wsong890/user68/project/UniVLA/pretrain/fast",**kwargs):
