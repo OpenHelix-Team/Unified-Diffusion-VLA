@@ -193,14 +193,6 @@ data_config = {
         'VIDEO_CODES_SAVE': lambda size, hz: f'/share/project/yuqi.wang/datasets/post_train_data/bridgev2_codes_{size[0]}_{hz}hz',
         'VIDEO_RECON_SAVE': lambda size, hz: f'/share/project/yuqi.wang/datasets/post_train_data/bridgev2_codes_{size[0]}_{hz}hz'
     },
-    'Calvin': {
-        'min_pixels': 80 * 80,
-        'interval': 1,
-        'SIZE': (80, 80),
-        'VIDEO_ROOT': '/share/user/iperror/data/univla/processed_data/calvin_abcd',
-        'VIDEO_CODES_SAVE': '/share/user/iperror/data/univla/processed_data/calvin_abcd_gripper_codes_augshift',
-        'VIDEO_RECON_SAVE': '/share/user/iperror/data/univla/processed_data/calvin_abcd_recon'
-    },
     'Calvin_static': {
         'min_pixels': 80 * 80,
         'interval': 1,
@@ -251,9 +243,9 @@ data_config = {
         'VIDEO_RECON_SAVE': '/share/user/iperror/data/univla/processed_data/libero_recon_256'
     },
     'libero_gripper': {
-        'min_pixels': 128 * 128,
+        'min_pixels': 80 * 80,
         'interval': 1,
-        'SIZE': (200, 200),
+        'SIZE': (80, 80),
         'VIDEO_ROOT': '/share/user/iperror/data/univla/processed_data/libero_all',
         'VIDEO_CODES_SAVE': '/share/user/iperror/data/univla/processed_data/libero_all_gripper_codes_200',
         'VIDEO_RECON_SAVE': '/share/user/iperror/data/univla/processed_data/libero_gripper_recon_256'
@@ -421,10 +413,10 @@ if __name__ == "__main__":
     # path = "/share/project/yuqi.wang/UniVLA/pretrain/Emu3-VisionVQ"
 
     # choose the dataset to process
-    process_data = 'ur5e_onetask_stastic'
+    process_data = 'Calvin_static'#"Calvin_static","Calvin_gripper", "libero",'libero_gripper'
     # process_data = 'ur5e_onetask_gripper'
     # current supported datasets
-    simulator_list = ["Calvin", "Calvin_partial","Calvin_static","Calvin_gripper", "libero", 'libero_long', 'libero_gripper', 'maniskill']
+    simulator_list = ["Calvin_partial","Calvin_static","Calvin_gripper", "libero", 'libero_long', 'libero_gripper', 'maniskill']
     oxe_list = ['RT1', 'DROID', 'BridgeV2', 'bridge_orig', 'fmb', 'toto', 'taco_play','kuka',\
                 'berkeley_autolab_ur5','viola', 'cmu_play_fusion', 'utaustin_mutex']
     aloha_list = ['aloha_songling','ur5e_onetask','ur5e_onetask_stastic','ur5e_onetask_gripper']
