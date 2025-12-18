@@ -59,4 +59,5 @@ torchrun \
     --mask_image True \
     --use_blockwise_attn_mask True \
     --attn_type "None" \
-    > ./logs/train_with_i_ia_mi_debug.log 2>&1
+    --fixbe False \
+    > ./logs/train_with_i_ia_mi.log 2>&1
