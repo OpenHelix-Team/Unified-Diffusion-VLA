@@ -21,7 +21,7 @@ torchrun --nproc_per_node=4 --master_addr="localhost" --master_port=29881 eval/l
 --task_suite_name libero_spatial \
 --dis_i2a \
 --steps $steps \
---cache_root /data/user/wsong890/user68/project/UniVLA/logs/libero_spatial/eval/${TIMESTAMP} \
---action_tokenizer /data/user/wsong890/user68/project/UniVLA/pretrain/fast_libero_all_t10_s50 \
+--cache_root Unified-Diffusion-VLA/logs/libero_goal/eval/${TIMESTAMP} \
+--action_tokenizer Unified-Diffusion-VLA/pretrain/fast_libero_all_t10_s50 \
 > ./log/libero/eval_libero_udvla_dis_32k_mi_1012_libero_spatial_${steps}steps.log 2>&1 
 # --debug
