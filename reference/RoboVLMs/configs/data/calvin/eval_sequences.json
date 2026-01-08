@@ -20,21 +20,21 @@
     ],
     [
         {
-            "led": 1,
+            "led": 0,
             "lightbulb": 1,
-            "slider": "right",
+            "slider": "left",
             "drawer": "open",
             "red_block": "slider_right",
-            "blue_block": "table",
-            "pink_block": "slider_left",
+            "blue_block": "slider_left",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "turn_off_led",
-            "push_into_drawer",
-            "lift_blue_block_drawer",
+            "close_drawer",
+            "lift_red_block_slider",
             "place_in_slider",
-            "close_drawer"
+            "turn_off_lightbulb",
+            "rotate_pink_block_left"
         ]
     ],
     [
@@ -134,9 +134,9 @@
     ],
     [
         {
-            "led": 0,
-            "lightbulb": 0,
-            "slider": "left",
+            "led": 1,
+            "lightbulb": 1,
+            "slider": "right",
             "drawer": "open",
             "red_block": "table",
             "blue_block": "slider_right",
@@ -144,11 +144,11 @@
             "grasped": 0
         },
         [
-            "push_pink_block_right",
-            "lift_pink_block_table",
-            "place_in_slider",
-            "push_into_drawer",
-            "close_drawer"
+            "turn_off_led",
+            "rotate_red_block_left",
+            "move_slider_left",
+            "lift_red_block_table",
+            "place_in_slider"
         ]
     ],
     [
@@ -706,18 +706,18 @@
         {
             "led": 0,
             "lightbulb": 1,
-            "slider": "right",
+            "slider": "left",
             "drawer": "open",
-            "red_block": "table",
-            "blue_block": "slider_left",
-            "pink_block": "slider_right",
+            "red_block": "slider_left",
+            "blue_block": "table",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "turn_off_lightbulb",
-            "push_red_block_right",
-            "push_into_drawer",
-            "move_slider_left",
+            "rotate_pink_block_right",
+            "lift_blue_block_table",
+            "stack_block",
+            "turn_on_led",
             "close_drawer"
         ]
     ],
@@ -992,18 +992,18 @@
             "led": 0,
             "lightbulb": 0,
             "slider": "left",
-            "drawer": "open",
-            "red_block": "slider_right",
+            "drawer": "closed",
+            "red_block": "table",
             "blue_block": "slider_left",
             "pink_block": "table",
             "grasped": 0
         },
         [
+            "push_red_block_left",
             "turn_on_led",
-            "push_pink_block_left",
-            "push_into_drawer",
-            "lift_red_block_slider",
-            "place_in_slider"
+            "lift_pink_block_table",
+            "place_in_slider",
+            "open_drawer"
         ]
     ],
     [
@@ -1084,21 +1084,21 @@
     ],
     [
         {
-            "led": 0,
-            "lightbulb": 0,
+            "led": 1,
+            "lightbulb": 1,
             "slider": "left",
-            "drawer": "open",
-            "red_block": "slider_left",
+            "drawer": "closed",
+            "red_block": "table",
             "blue_block": "table",
-            "pink_block": "slider_right",
+            "pink_block": "slider_left",
             "grasped": 0
         },
         [
-            "push_blue_block_left",
-            "push_into_drawer",
-            "lift_blue_block_drawer",
-            "place_in_slider",
-            "move_slider_right"
+            "move_slider_right",
+            "open_drawer",
+            "rotate_blue_block_right",
+            "turn_off_lightbulb",
+            "lift_red_block_table"
         ]
     ],
     [
@@ -1863,21 +1863,21 @@
     ],
     [
         {
-            "led": 0,
+            "led": 1,
             "lightbulb": 1,
             "slider": "right",
-            "drawer": "open",
+            "drawer": "closed",
             "red_block": "table",
-            "blue_block": "slider_left",
-            "pink_block": "slider_right",
+            "blue_block": "slider_right",
+            "pink_block": "table",
             "grasped": 0
         },
         [
+            "lift_pink_block_table",
+            "place_in_slider",
             "move_slider_left",
-            "push_red_block_right",
-            "push_into_drawer",
-            "turn_on_led",
-            "close_drawer"
+            "rotate_red_block_left",
+            "turn_off_lightbulb"
         ]
     ],
     [
@@ -1939,21 +1939,21 @@
     ],
     [
         {
-            "led": 0,
+            "led": 1,
             "lightbulb": 0,
-            "slider": "right",
-            "drawer": "closed",
+            "slider": "left",
+            "drawer": "open",
             "red_block": "slider_left",
             "blue_block": "table",
-            "pink_block": "slider_right",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "open_drawer",
+            "move_slider_right",
+            "turn_on_lightbulb",
             "rotate_blue_block_left",
-            "push_into_drawer",
-            "lift_red_block_slider",
-            "place_in_drawer"
+            "lift_blue_block_table",
+            "place_in_slider"
         ]
     ],
     [
@@ -2493,18 +2493,18 @@
             "led": 1,
             "lightbulb": 0,
             "slider": "right",
-            "drawer": "open",
-            "red_block": "slider_left",
-            "blue_block": "table",
-            "pink_block": "slider_right",
+            "drawer": "closed",
+            "red_block": "table",
+            "blue_block": "slider_left",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "move_slider_left",
-            "push_blue_block_right",
-            "push_into_drawer",
-            "close_drawer",
-            "lift_pink_block_slider"
+            "open_drawer",
+            "turn_off_led",
+            "rotate_pink_block_right",
+            "lift_pink_block_table",
+            "place_in_drawer"
         ]
     ],
     [
@@ -2680,21 +2680,21 @@
     ],
     [
         {
-            "led": 1,
+            "led": 0,
             "lightbulb": 0,
             "slider": "right",
-            "drawer": "open",
-            "red_block": "slider_right",
-            "blue_block": "table",
-            "pink_block": "slider_left",
+            "drawer": "closed",
+            "red_block": "table",
+            "blue_block": "slider_left",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "turn_on_lightbulb",
             "move_slider_left",
-            "push_blue_block_left",
-            "push_into_drawer",
-            "lift_red_block_slider"
+            "open_drawer",
+            "turn_on_lightbulb",
+            "rotate_red_block_right",
+            "lift_pink_block_table"
         ]
     ],
     [
@@ -3326,21 +3326,21 @@
     ],
     [
         {
-            "led": 1,
-            "lightbulb": 0,
-            "slider": "left",
+            "led": 0,
+            "lightbulb": 1,
+            "slider": "right",
             "drawer": "open",
-            "red_block": "slider_left",
-            "blue_block": "table",
-            "pink_block": "slider_right",
+            "red_block": "slider_right",
+            "blue_block": "slider_left",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "turn_off_led",
-            "push_blue_block_left",
-            "push_into_drawer",
-            "move_slider_right",
-            "lift_blue_block_drawer"
+            "rotate_pink_block_left",
+            "lift_blue_block_slider",
+            "place_in_drawer",
+            "turn_off_lightbulb",
+            "lift_pink_block_table"
         ]
     ],
     [
@@ -3954,20 +3954,20 @@
     [
         {
             "led": 0,
-            "lightbulb": 1,
+            "lightbulb": 0,
             "slider": "left",
-            "drawer": "open",
+            "drawer": "closed",
             "red_block": "slider_left",
-            "blue_block": "slider_right",
-            "pink_block": "table",
+            "blue_block": "table",
+            "pink_block": "slider_right",
             "grasped": 0
         },
         [
-            "push_pink_block_right",
-            "push_into_drawer",
-            "turn_off_lightbulb",
+            "turn_on_led",
+            "open_drawer",
             "move_slider_right",
-            "lift_pink_block_drawer"
+            "lift_blue_block_table",
+            "place_in_slider"
         ]
     ],
     [
@@ -4961,20 +4961,20 @@
     [
         {
             "led": 1,
-            "lightbulb": 0,
+            "lightbulb": 1,
             "slider": "left",
             "drawer": "open",
             "red_block": "table",
             "blue_block": "slider_left",
-            "pink_block": "slider_right",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "push_red_block_left",
-            "push_into_drawer",
-            "move_slider_right",
-            "turn_on_lightbulb",
-            "lift_blue_block_slider"
+            "close_drawer",
+            "push_red_block_right",
+            "lift_pink_block_table",
+            "place_in_slider",
+            "move_slider_right"
         ]
     ],
     [
@@ -5739,10 +5739,10 @@
     ],
     [
         {
-            "led": 0,
+            "led": 1,
             "lightbulb": 1,
             "slider": "left",
-            "drawer": "open",
+            "drawer": "closed",
             "red_block": "table",
             "blue_block": "slider_right",
             "pink_block": "slider_left",
@@ -5750,10 +5750,10 @@
         },
         [
             "push_red_block_right",
-            "push_into_drawer",
             "lift_blue_block_slider",
-            "place_in_drawer",
-            "turn_off_lightbulb"
+            "stack_block",
+            "turn_off_led",
+            "open_drawer"
         ]
     ],
     [
@@ -7335,21 +7335,21 @@
     ],
     [
         {
-            "led": 1,
+            "led": 0,
             "lightbulb": 0,
             "slider": "right",
-            "drawer": "open",
+            "drawer": "closed",
             "red_block": "table",
-            "blue_block": "table",
+            "blue_block": "slider_right",
             "pink_block": "slider_left",
             "grasped": 0
         },
         [
+            "move_slider_left",
+            "push_red_block_left",
+            "open_drawer",
             "lift_red_block_table",
-            "place_in_slider",
-            "push_blue_block_right",
-            "push_into_drawer",
-            "lift_pink_block_slider"
+            "place_in_slider"
         ]
     ],
     [
@@ -7811,20 +7811,20 @@
     [
         {
             "led": 0,
-            "lightbulb": 1,
-            "slider": "right",
+            "lightbulb": 0,
+            "slider": "left",
             "drawer": "open",
             "red_block": "slider_left",
             "blue_block": "table",
-            "pink_block": "slider_right",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "move_slider_left",
-            "rotate_blue_block_left",
-            "push_into_drawer",
-            "lift_pink_block_slider",
-            "place_in_drawer"
+            "move_slider_right",
+            "lift_red_block_slider",
+            "place_in_drawer",
+            "turn_on_lightbulb",
+            "rotate_blue_block_left"
         ]
     ],
     [
@@ -7948,16 +7948,16 @@
             "slider": "left",
             "drawer": "open",
             "red_block": "table",
-            "blue_block": "slider_right",
+            "blue_block": "table",
             "pink_block": "slider_left",
             "grasped": 0
         },
         [
-            "turn_on_lightbulb",
-            "push_red_block_right",
-            "push_into_drawer",
-            "move_slider_right",
-            "close_drawer"
+            "lift_red_block_table",
+            "place_in_slider",
+            "close_drawer",
+            "rotate_blue_block_right",
+            "turn_on_lightbulb"
         ]
     ],
     [
@@ -9501,21 +9501,21 @@
     ],
     [
         {
-            "led": 1,
-            "lightbulb": 0,
-            "slider": "right",
-            "drawer": "open",
-            "red_block": "slider_left",
-            "blue_block": "table",
-            "pink_block": "slider_right",
+            "led": 0,
+            "lightbulb": 1,
+            "slider": "left",
+            "drawer": "closed",
+            "red_block": "slider_right",
+            "blue_block": "slider_left",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "push_blue_block_right",
-            "push_into_drawer",
-            "move_slider_left",
-            "close_drawer",
-            "turn_on_lightbulb"
+            "rotate_pink_block_right",
+            "lift_red_block_slider",
+            "stack_block",
+            "move_slider_right",
+            "open_drawer"
         ]
     ],
     [
@@ -9786,21 +9786,21 @@
     ],
     [
         {
-            "led": 1,
-            "lightbulb": 1,
-            "slider": "left",
+            "led": 0,
+            "lightbulb": 0,
+            "slider": "right",
             "drawer": "open",
             "red_block": "table",
-            "blue_block": "slider_left",
-            "pink_block": "slider_right",
+            "blue_block": "slider_right",
+            "pink_block": "table",
             "grasped": 0
         },
         [
-            "turn_off_led",
+            "close_drawer",
+            "move_slider_left",
             "push_red_block_left",
-            "push_into_drawer",
-            "lift_pink_block_slider",
-            "place_in_slider"
+            "lift_red_block_table",
+            "stack_block"
         ]
     ],
     [
