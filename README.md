@@ -26,9 +26,11 @@
 
 \* Equal Contribution  † Project leader  ‡ Corresponding Author -->
 
-**🔥 The first open-sourced diffusion vision-langauge-action model.**
+**🔥 The first open-sourced diffusion vision-langauge-action model. [ICLR2026]**
 
 <!-- <hr style="border: 2px solid gray;"></hr> -->
+## :loudspeaker: News!
+- **[2026/01/27]** UD-VLA is accepted by ICLR 2026!🎉
 
 ## List
  
