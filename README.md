@@ -263,7 +263,7 @@ If you find UD-VLA useful, please consider citing our work🤗:
 @article{udvla2025,
 title={Unified Diffusion VLA: Vision-Language-Action Model via Joint Discrete Denoising Diffusion Process},
 author={Jiayi Chen, Wenxuan Song, Pengxiang Ding, Ziyang Zhou, Han Zhao, Feilong Tang, Donglin Wang, Haoang Li},
-year={2025},
+year={2025 },
 journal={arXiv preprint arXiv:2511.01718}
 }
 ```
